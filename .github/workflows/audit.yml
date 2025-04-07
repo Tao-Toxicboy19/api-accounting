@@ -25,7 +25,7 @@ jobs:
             ${{ runner.os }}-npm-
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Audit packages
         run: npm audit --omit=dev
