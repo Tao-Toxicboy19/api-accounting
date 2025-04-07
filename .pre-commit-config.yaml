@@ -1,0 +1,9 @@
+repos:
+  - repo: local
+    hooks:
+      - id: eslint
+        name: eslint (local)
+        entry: npx eslint
+        language: system
+        files: \.(ts|js)$
+        args: ['--ext', '.ts,.js', '--max-warnings=0', '--fix']
