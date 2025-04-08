@@ -1,0 +1,33 @@
+name: unit-test
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  jest:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm install --frozen-lockfile
+
+      - name: Run unit test only for changed modules
+        run: |
+          CHANGED_TESTS=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | grep '\.spec\.ts$' || true)
+
+          if [ -z "$CHANGED_TESTS" ]; then
+            echo "No test files changed."
+          else
+            echo "Running tests for changed files:"
+            echo "$CHANGED_TESTS"
+            npx jest $CHANGED_TESTS
+          fi

@@ -7,3 +7,19 @@ repos:
         language: system
         files: \.(ts|js)$
         args: ['--ext', '.ts,.js', '--max-warnings=0', '--fix']
+
+      - id: jest-tests
+        name: Run changed unit tests
+        entry: bash
+        language: system
+        pass_filenames: false
+        always_run: true
+        script: |
+          CHANGED_TESTS=$(git diff --cached --name-only | grep '\.spec\.ts$' || true)
+          if [ -z "$CHANGED_TESTS" ]; then
+            echo "No test files changed."
+          else
+            echo "Running tests for changed files:"
+            echo "$CHANGED_TESTS"
+            npx jest $CHANGED_TESTS
+          fi
