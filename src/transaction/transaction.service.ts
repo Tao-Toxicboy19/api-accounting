@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Transaction, TransactionDocument } from './schema/transaction.schema';
 import { Model } from 'mongoose';
@@ -17,5 +17,17 @@ export class TransactionService {
       date: new Date(dto.date),
     });
     return await created.save();
+  }
+
+  async findByUser(userId: string): Promise<Transaction[]> {
+    const transactions = await this.transactionModel
+      .find({ user: userId })
+      .exec();
+
+    if (!transactions || transactions.length === 0) {
+      throw new NotFoundException('No transactions found');
+    }
+
+    return transactions;
   }
 }
