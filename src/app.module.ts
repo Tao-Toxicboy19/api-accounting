@@ -1,18 +1,27 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TransactionModule } from './transaction/transaction.module';
 
 @Module({
   imports: [
-    MongooseModule.forRoot(`mongodb://localhost:27017`, {
-      user: 'root',
-      pass: 'example',
-      dbName: 'mikelopster',
-      authSource: 'admin',
+    ConfigModule.forRoot({
+      isGlobal: true,
     }),
+
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        uri: configService.get<string>('MONGO_URI'),
+        user: configService.get<string>('MONGO_USER'),
+        pass: configService.get<string>('MONGO_PASS'),
+        dbName: configService.get<string>('MONGO_DB'),
+        authSource: configService.get<string>('MONGO_AUTH_SOURCE'),
+      }),
+      inject: [ConfigService],
+    }),
+
     TransactionModule,
   ],
-  controllers: [],
-  providers: [],
 })
 export class AppModule {}
