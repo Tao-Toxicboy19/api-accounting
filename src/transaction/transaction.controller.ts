@@ -2,7 +2,8 @@ import { Body, Controller, Post } from '@nestjs/common';
 import { TransactionService } from './transaction.service';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { Transaction } from './schema/transaction.schema';
-import { FindTransactionDto } from './dto/find-transaction.dto';
+import { FindTransactionByUserDto } from './dto/find-transaction-by-user.dto';
+import { DeteleTransactionByUser } from './dto/delete-transaction-by-user.dto';
 
 @Controller('transaction')
 export class TransactionController {
@@ -13,8 +14,15 @@ export class TransactionController {
     return this.transactionService.create(dto);
   }
 
-  @Post('by-user')
-  async findByUser(@Body() body: FindTransactionDto): Promise<Transaction[]> {
-    return this.transactionService.findByUser(body.userId);
+  @Post('by/user')
+  async findByUser(
+    @Body() dto: FindTransactionByUserDto,
+  ): Promise<Transaction[]> {
+    return this.transactionService.findByUser(dto.user);
+  }
+
+  @Post('delete')
+  async deleteTransaction(@Body() dto: DeteleTransactionByUser): Promise<void> {
+    return this.transactionService.deleteByUser(dto);
   }
 }

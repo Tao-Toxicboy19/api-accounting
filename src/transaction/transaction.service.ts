@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Transaction, TransactionDocument } from './schema/transaction.schema';
 import { Model } from 'mongoose';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
+import { DeteleTransactionByUser } from './dto/delete-transaction-by-user.dto';
 
 @Injectable()
 export class TransactionService {
@@ -21,7 +22,8 @@ export class TransactionService {
 
   async findByUser(userId: string): Promise<Transaction[]> {
     const transactions = await this.transactionModel
-      .find({ user: userId })
+      .find({ user: userId, deletedAt: null })
+      .select('-createdAt -updatedAt -__v')
       .exec();
 
     if (!transactions || transactions.length === 0) {
@@ -29,5 +31,22 @@ export class TransactionService {
     }
 
     return transactions;
+  }
+
+  async deleteByUser(dto: DeteleTransactionByUser): Promise<void> {
+    const result = await this.transactionModel.updateOne(
+      {
+        _id: dto.id,
+        user: dto.user,
+        deletedAt: { $exists: false },
+      },
+      {
+        $set: { deletedAt: new Date() },
+      },
+    );
+
+    if (result.modifiedCount === 0) {
+      throw new NotFoundException('Transaction not found or already deleted');
+    }
   }
 }

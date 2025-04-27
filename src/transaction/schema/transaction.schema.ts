@@ -25,6 +25,9 @@ export class Transaction {
 
   @Prop()
   note?: string;
+
+  @Prop()
+  deletedAt?: Date;
 }
 
 export const TransactionSchema = SchemaFactory.createForClass(Transaction);
