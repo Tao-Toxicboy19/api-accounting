@@ -1,16 +1,20 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { TransactionService } from './transaction.service';
-import { CreateTransactionDto } from './dto/create-transaction.dto';
-import { Transaction } from './schema/transaction.schema';
-import { FindTransactionByUserDto } from './dto/find-transaction-by-user.dto';
-import { DeteleTransactionByUser } from './dto/delete-transaction-by-user.dto';
+import { Transaction } from './schema';
+import {
+  FindTransactionByUserDto,
+  DeteleTransactionByUser,
+  CreateTransactionWithInstallmentDto,
+} from './dto';
 
 @Controller('transaction')
 export class TransactionController {
   constructor(private readonly transactionService: TransactionService) {}
 
   @Post('create')
-  async create(@Body() dto: CreateTransactionDto): Promise<Transaction> {
+  async create(
+    @Body() dto: CreateTransactionWithInstallmentDto,
+  ): Promise<Transaction> {
     return this.transactionService.create(dto);
   }
 
