@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 
 export type TransactionDocument = Transaction & Document;
 
@@ -23,8 +23,14 @@ export class Transaction {
   @Prop()
   category?: string;
 
+  @Prop({ type: Types.ObjectId, ref: 'Installment' })
+  installmentId?: Types.ObjectId;
+
   @Prop()
   note?: string;
+
+  @Prop()
+  deletedAt?: Date;
 }
 
 export const TransactionSchema = SchemaFactory.createForClass(Transaction);

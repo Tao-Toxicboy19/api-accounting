@@ -1,0 +1,30 @@
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document } from 'mongoose';
+
+export type InstallmentDocument = Installment & Document;
+
+@Schema({ timestamps: true })
+export class Installment {
+  @Prop({ required: true, index: true })
+  name: string;
+
+  @Prop({ required: true })
+  startDate: Date;
+
+  @Prop({ required: true })
+  interestRate: number;
+
+  @Prop({ required: true })
+  paidMonths: number;
+
+  @Prop({ required: true })
+  totalMonth: number;
+
+  @Prop()
+  note?: string;
+
+  @Prop()
+  deletedAt?: Date;
+}
+
+export const InstallmentSchema = SchemaFactory.createForClass(Installment);
