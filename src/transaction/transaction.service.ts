@@ -42,17 +42,11 @@ export class TransactionService {
   }
 
   async findByUser(userId: string): Promise<Transaction[]> {
-    const transactions = await this.transactionModel
+    return await this.transactionModel
       .find({ user: userId, deletedAt: null })
       .select('-createdAt -updatedAt -__v')
       .populate('installmentId')
       .exec();
-
-    if (!transactions || transactions.length === 0) {
-      throw new NotFoundException('No transactions found');
-    }
-
-    return transactions;
   }
 
   async deleteByUser(dto: DeteleTransactionByUser): Promise<void> {
