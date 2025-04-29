@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Installment, InstallmentDocument } from './schema';
 import { Model } from 'mongoose';
-import { CreateInstallmentDto } from './dto';
+import { CreateInstallmentDto, LabelValueDto } from './dto';
 
 @Injectable()
 export class InstallmentService {
@@ -18,5 +18,17 @@ export class InstallmentService {
     }).save();
 
     return { id: installment._id as string };
+  }
+
+  async findInstallmentByUser(userId: string): Promise<LabelValueDto[]> {
+    const installments = await this.installmentModel
+      .find({ user: userId, deletedAt: null })
+      .select('name _id')
+      .exec();
+
+    return installments.map((i) => ({
+      label: i.name,
+      value: i._id as string,
+    }));
   }
 }
