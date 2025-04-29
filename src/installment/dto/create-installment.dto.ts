@@ -10,6 +10,10 @@ import {
 export class CreateInstallmentDto {
   @IsString()
   @IsNotEmpty()
+  user: string;
+
+  @IsString()
+  @IsNotEmpty()
   name: string;
 
   @IsDateString()
