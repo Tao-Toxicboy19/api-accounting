@@ -8,6 +8,9 @@ export class Installment {
   @Prop({ required: true, index: true })
   name: string;
 
+  @Prop({ required: true, index: true })
+  user: string;
+
   @Prop({ required: true })
   startDate: Date;
 

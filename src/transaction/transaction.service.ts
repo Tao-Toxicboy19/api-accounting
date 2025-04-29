@@ -21,6 +21,7 @@ export class TransactionService {
   async create(dto: CreateTransactionWithInstallmentDto): Promise<Transaction> {
     if (dto.type == 'installment') {
       const value: CreateInstallmentDto = {
+        user: dto.user,
         name: dto.title,
         startDate: dto.date,
         interestRate: dto.interestRate,
