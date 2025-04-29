@@ -21,9 +21,7 @@ import { InstallmentModule } from './installment/installment.module';
       }),
       inject: [ConfigService],
     }),
-
     TransactionModule,
-
     InstallmentModule,
   ],
 })
