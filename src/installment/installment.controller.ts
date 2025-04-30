@@ -5,13 +5,14 @@ import {
   FindInstallmentByUserDto,
   LabelValueDto,
 } from './dto';
+import { Installment } from './schema';
 
 @Controller('installment')
 export class InstallmentController {
   constructor(private readonly installmentService: InstallmentService) {}
 
   @Post('create')
-  async create(@Body() dto: CreateInstallmentDto): Promise<{ id: string }> {
+  async create(@Body() dto: CreateInstallmentDto): Promise<Installment> {
     return this.installmentService.createInstallment(dto);
   }
 

@@ -11,13 +11,11 @@ export class InstallmentService {
     private installmentModel: Model<InstallmentDocument>,
   ) {}
 
-  async createInstallment(dto: CreateInstallmentDto): Promise<{ id: string }> {
-    const installment = await new this.installmentModel({
+  async createInstallment(dto: CreateInstallmentDto): Promise<Installment> {
+    return await new this.installmentModel({
       ...dto,
       startDate: new Date(dto.startDate),
     }).save();
-
-    return { id: installment._id as string };
   }
 
   async findInstallmentByUser(userId: string): Promise<LabelValueDto[]> {
@@ -25,10 +23,26 @@ export class InstallmentService {
       .find({ user: userId, deletedAt: null })
       .select('name _id')
       .exec();
-
     return installments.map((i) => ({
       label: i.name,
       value: i._id as string,
     }));
+  }
+
+  async updatePaidMonth(
+    id: string,
+    user: string,
+    price: number,
+  ): Promise<void> {
+    await this.installmentModel.updateOne(
+      {
+        _id: id,
+        user: user,
+        deletedAt: { $exists: false },
+      },
+      {
+        $inc: { paidMonths: 1, totalPrice: price },
+      },
+    );
   }
 }
