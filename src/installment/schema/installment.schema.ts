@@ -17,11 +17,14 @@ export class Installment {
   @Prop({ required: true })
   interestRate: number;
 
-  @Prop({ required: true })
+  @Prop()
   paidMonths: number;
 
   @Prop({ required: true })
   totalMonth: number;
+
+  @Prop({ default: 0 })
+  totalPrice: number;
 
   @Prop()
   note?: string;

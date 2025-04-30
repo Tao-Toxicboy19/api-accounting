@@ -8,7 +8,6 @@ import {
 } from './dto';
 import { Transaction, TransactionDocument } from './schema';
 import { InstallmentService } from '../installment/installment.service';
-import { CreateInstallmentDto } from '../installment/dto';
 
 @Injectable()
 export class TransactionService {
@@ -19,18 +18,12 @@ export class TransactionService {
   ) {}
 
   async create(dto: CreateTransactionWithInstallmentDto): Promise<Transaction> {
-    if (dto.type == 'installment') {
-      const value: CreateInstallmentDto = {
-        user: dto.user,
-        name: dto.title,
-        startDate: dto.date,
-        interestRate: dto.interestRate,
-        paidMonths: dto.paidMonths,
-        totalMonth: dto.totalMonth,
-      };
-      const installment =
-        await this.installmentService.createInstallment(value);
-      dto.installmentId = installment.id;
+    if (dto.type === 'installment' && dto.installmentId) {
+      await this.installmentService.updatePaidMonth(
+        dto.installmentId,
+        dto.user,
+        dto.amount,
+      );
     }
     return await this.createTransaction(dto);
   }
@@ -46,7 +39,6 @@ export class TransactionService {
     return await this.transactionModel
       .find({ user: userId, deletedAt: null })
       .select('-createdAt -updatedAt -__v')
-      .populate('installmentId')
       .exec();
   }
 
