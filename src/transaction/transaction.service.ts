@@ -39,6 +39,7 @@ export class TransactionService {
     return await this.transactionModel
       .find({ user: userId, deletedAt: null })
       .select('-createdAt -updatedAt -__v')
+      .sort({ date: 1 })
       .exec();
   }
 
