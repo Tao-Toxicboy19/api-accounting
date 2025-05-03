@@ -3,11 +3,11 @@ import { TransactionService } from './transaction.service';
 import { Transaction } from './schema';
 import {
   FindTransactionByUserDto,
-  DeteleTransactionByUser,
+  DeleteTransactionByUserDto,
   CreateTransactionWithInstallmentDto,
 } from './dto';
 
-@Controller('transaction')
+@Controller('transactions')
 export class TransactionController {
   constructor(private readonly transactionService: TransactionService) {}
 
@@ -18,15 +18,15 @@ export class TransactionController {
     return this.transactionService.create(dto);
   }
 
-  @Post('by/user')
-  async findByUser(
+  @Post('list')
+  async findAllByUser(
     @Body() dto: FindTransactionByUserDto,
   ): Promise<Transaction[]> {
-    return this.transactionService.findByUser(dto.user);
+    return this.transactionService.findAllByUser(dto.user);
   }
 
   @Post('delete')
-  async deleteTransaction(@Body() dto: DeteleTransactionByUser): Promise<void> {
-    return this.transactionService.deleteByUser(dto);
+  async softDelete(@Body() dto: DeleteTransactionByUserDto): Promise<void> {
+    return this.transactionService.softDeleteByUser(dto);
   }
 }
