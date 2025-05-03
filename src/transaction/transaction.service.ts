@@ -3,8 +3,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import {
   CreateTransactionDto,
-  DeteleTransactionByUser,
   CreateTransactionWithInstallmentDto,
+  DeleteTransactionByUserDto,
 } from './dto';
 import { Transaction, TransactionDocument } from './schema';
 import { InstallmentService } from '../installment/installment.service';
@@ -13,38 +13,41 @@ import { InstallmentService } from '../installment/installment.service';
 export class TransactionService {
   constructor(
     @InjectModel(Transaction.name)
-    private transactionModel: Model<TransactionDocument>,
-    private installmentService: InstallmentService,
+    private readonly model: Model<TransactionDocument>,
+    private readonly installmentService: InstallmentService,
   ) {}
 
   async create(dto: CreateTransactionWithInstallmentDto): Promise<Transaction> {
     if (dto.type === 'installment' && dto.installmentId) {
-      await this.installmentService.updatePaidMonth(
+      await this.installmentService.incrementPaidMonth(
         dto.installmentId,
         dto.user,
         dto.amount,
       );
     }
-    return await this.createTransaction(dto);
+    return this.saveTransaction(dto);
   }
 
-  async createTransaction(dto: CreateTransactionDto): Promise<Transaction> {
-    return await new this.transactionModel({
+  private async saveTransaction(
+    dto: CreateTransactionDto,
+  ): Promise<Transaction> {
+    const transaction = new this.model({
       ...dto,
       date: new Date(dto.date),
-    }).save();
+    });
+    return transaction.save();
   }
 
-  async findByUser(userId: string): Promise<Transaction[]> {
-    return await this.transactionModel
+  async findAllByUser(userId: string): Promise<Transaction[]> {
+    return this.model
       .find({ user: userId, deletedAt: null })
       .select('-createdAt -updatedAt -__v')
       .sort({ date: 1 })
       .exec();
   }
 
-  async deleteByUser(dto: DeteleTransactionByUser): Promise<void> {
-    const result = await this.transactionModel.updateOne(
+  async softDeleteByUser(dto: DeleteTransactionByUserDto): Promise<void> {
+    const result = await this.model.updateOne(
       {
         _id: dto.id,
         user: dto.user,

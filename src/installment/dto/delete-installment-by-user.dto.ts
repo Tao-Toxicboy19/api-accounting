@@ -1,8 +1,8 @@
 import { PickType } from '@nestjs/mapped-types';
-import { CreateTransactionDto } from './create-transaction.dto';
+import { CreateInstallmentDto } from './create-installment.dto';
 import { IsNotEmpty, IsString } from 'class-validator';
 
-export class DeleteTransactionByUserDto extends PickType(CreateTransactionDto, [
+export class DeleteInstallmentByUserDto extends PickType(CreateInstallmentDto, [
   'user',
 ]) {
   @IsString()
