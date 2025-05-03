@@ -18,6 +18,8 @@ export class InstallmentService {
   async create(dto: CreateInstallmentDto): Promise<Installment> {
     const installment = new this.model({
       ...dto,
+      interestRate: dto.interestRate || 0,
+      totalPrice: dto.totalPrice || 0,
       startDate: new Date(dto.startDate),
     });
     return installment.save();

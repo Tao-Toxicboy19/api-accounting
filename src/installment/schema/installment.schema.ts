@@ -14,16 +14,16 @@ export class Installment {
   @Prop({ required: true })
   startDate: Date;
 
-  @Prop({ required: true })
+  @Prop({ default: 0 })
   interestRate: number;
 
-  @Prop()
+  @Prop({ default: 0 })
   paidMonths: number;
 
-  @Prop({ required: true })
+  @Prop({ required: true, default: 0 })
   totalMonth: number;
 
-  @Prop({ default: 0 })
+  @Prop()
   totalPrice: number;
 
   @Prop()
@@ -34,3 +34,7 @@ export class Installment {
 }
 
 export const InstallmentSchema = SchemaFactory.createForClass(Installment);
+InstallmentSchema.index(
+  { deletedAt: 1 },
+  { expireAfterSeconds: 60 * 60 * 24 * 7 },
+);
