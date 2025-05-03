@@ -21,15 +21,19 @@ export class CreateInstallmentDto {
 
   @IsOptional()
   @IsNumber()
-  interestRate?: number;
+  interestRate: number;
 
   @IsOptional()
   @IsNumber()
   paidMonths?: number;
 
-  @IsOptional()
+  @IsNotEmpty()
   @IsNumber()
   totalMonth?: number;
+
+  @IsOptional()
+  @IsNumber()
+  totalPrice?: number;
 
   @IsOptional()
   @IsString()
