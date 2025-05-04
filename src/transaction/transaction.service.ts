@@ -8,7 +8,7 @@ import {
 } from './dto';
 import { Transaction, TransactionDocument } from './schema';
 import { InstallmentService } from '../installment/installment.service';
-
+import * as dayjs from 'dayjs';
 @Injectable()
 export class TransactionService {
   constructor(
@@ -19,11 +19,12 @@ export class TransactionService {
 
   async create(dto: CreateTransactionWithInstallmentDto): Promise<Transaction> {
     if (dto.type === 'installment' && dto.installmentId) {
-      await this.installmentService.incrementPaidMonth(
+      const { name } = await this.installmentService.incrementPaidMonth(
         dto.installmentId,
         dto.user,
         dto.amount,
       );
+      dto.title = name;
     }
     return this.saveTransaction(dto);
   }
@@ -61,5 +62,47 @@ export class TransactionService {
     if (result.modifiedCount === 0) {
       throw new NotFoundException('Transaction not found or already deleted');
     }
+  }
+
+  async getIncomeAndExpenseSum(
+    userId: string,
+  ): Promise<{ income: number; expense: number }> {
+    const startOfMonth = dayjs().startOf('month').add(1, 'day').toDate();
+    const today = new Date();
+
+    const [result] = await this.model.aggregate([
+      {
+        $match: {
+          user: userId,
+          type: { $in: ['income', 'expense'] },
+          deletedAt: null,
+          date: { $gte: startOfMonth, $lte: today },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          income: {
+            $sum: {
+              $cond: [{ $eq: ['$type', 'income'] }, '$amount', 0],
+            },
+          },
+          expense: {
+            $sum: {
+              $cond: [{ $eq: ['$type', 'expense'] }, '$amount', 0],
+            },
+          },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          income: 1,
+          expense: 1,
+        },
+      },
+    ]);
+
+    return result || { income: 0, expense: 0 };
   }
 }

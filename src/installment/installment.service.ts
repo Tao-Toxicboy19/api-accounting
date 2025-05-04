@@ -49,8 +49,8 @@ export class InstallmentService {
     installmentId: string,
     userId: string,
     amount: number,
-  ): Promise<void> {
-    await this.model.updateOne(
+  ): Promise<{ name: string }> {
+    const updated = await this.model.findOneAndUpdate(
       {
         _id: installmentId,
         user: userId,
@@ -59,7 +59,17 @@ export class InstallmentService {
       {
         $inc: { paidMonths: 1, totalPrice: amount },
       },
+      {
+        new: true, // return updated document
+        projection: { name: 1 }, // return only the `name` field
+      },
     );
+
+    if (!updated) {
+      throw new Error('Installment not found or already deleted');
+    }
+
+    return { name: updated.name };
   }
 
   async softDeleteByUser(dto: DeleteInstallmentByUserDto): Promise<void> {

@@ -5,6 +5,7 @@ import {
   FindTransactionByUserDto,
   DeleteTransactionByUserDto,
   CreateTransactionWithInstallmentDto,
+  UserIdDto,
 } from './dto';
 
 @Controller('transactions')
@@ -28,5 +29,12 @@ export class TransactionController {
   @Post('delete')
   async softDelete(@Body() dto: DeleteTransactionByUserDto): Promise<void> {
     return this.transactionService.softDeleteByUser(dto);
+  }
+
+  @Post('summary')
+  async getIncomeAndExpenseSummary(
+    @Body() dto: UserIdDto,
+  ): Promise<{ income: number; expense: number }> {
+    return this.transactionService.getIncomeAndExpenseSum(dto.user);
   }
 }
