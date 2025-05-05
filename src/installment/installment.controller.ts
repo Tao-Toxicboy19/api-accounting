@@ -5,6 +5,7 @@ import {
   FindInstallmentByUserDto,
   DeleteInstallmentByUserDto,
   LabelValueDto,
+  UpdateInstallmentDto,
 } from './dto';
 import { Installment } from './schema';
 
@@ -32,5 +33,11 @@ export class InstallmentController {
   @Post('delete')
   async delete(@Body() dto: DeleteInstallmentByUserDto): Promise<void> {
     return this.installmentService.softDeleteByUser(dto);
+  }
+  @Post('update')
+  async updateInstallment(
+    @Body() dto: UpdateInstallmentDto,
+  ): Promise<Installment> {
+    return this.installmentService.updateInstallmet(dto);
   }
 }
