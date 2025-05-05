@@ -6,6 +6,7 @@ import {
   CreateInstallmentDto,
   DeleteInstallmentByUserDto,
   LabelValueDto,
+  UpdateInstallmentDto,
 } from './dto';
 
 @Injectable()
@@ -87,5 +88,19 @@ export class InstallmentService {
     if (result.modifiedCount === 0) {
       throw new NotFoundException('Installment not found or already deleted.');
     }
+  }
+
+  async updateInstallmet(dto: UpdateInstallmentDto): Promise<Installment> {
+    const result = await this.model.findOneAndUpdate(
+      { _id: dto.id, deletedAt: { $exists: false } },
+      { $set: dto },
+      { new: true },
+    );
+
+    if (!result) {
+      throw new NotFoundException('Installment not found');
+    }
+
+    return result;
   }
 }

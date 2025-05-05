@@ -16,8 +16,8 @@ export class CreateTransactionDto {
   type: 'income' | 'expense' | 'installment';
 
   @IsString()
-  @IsNotEmpty()
-  title: string;
+  @IsOptional()
+  title?: string;
 
   @IsNumber()
   amount: number;
