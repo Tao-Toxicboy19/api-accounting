@@ -13,7 +13,6 @@ import { join } from 'path';
     }),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'client/dist'),
-      exclude: ['/api*'],
     }),
 
     MongooseModule.forRootAsync({

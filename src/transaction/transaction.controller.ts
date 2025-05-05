@@ -6,6 +6,7 @@ import {
   DeleteTransactionByUserDto,
   CreateTransactionWithInstallmentDto,
   UserIdDto,
+  UpdateTransactionDto,
 } from './dto';
 
 @Controller('transactions')
@@ -36,5 +37,12 @@ export class TransactionController {
     @Body() dto: UserIdDto,
   ): Promise<{ income: number; expense: number }> {
     return this.transactionService.getIncomeAndExpenseSum(dto.user);
+  }
+
+  @Post('update')
+  async updateTransaction(
+    @Body() dto: UpdateTransactionDto,
+  ): Promise<Transaction> {
+    return this.transactionService.updateTransaction(dto);
   }
 }

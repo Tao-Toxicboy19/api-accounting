@@ -5,6 +5,7 @@ import {
   CreateTransactionDto,
   CreateTransactionWithInstallmentDto,
   DeleteTransactionByUserDto,
+  UpdateTransactionDto,
 } from './dto';
 import { Transaction, TransactionDocument } from './schema';
 import { InstallmentService } from '../installment/installment.service';
@@ -104,5 +105,19 @@ export class TransactionService {
     ]);
 
     return result || { income: 0, expense: 0 };
+  }
+
+  async updateTransaction(dto: UpdateTransactionDto): Promise<Transaction> {
+    const transaction = await this.model.findOneAndUpdate(
+      { _id: dto.id, deletedAt: { $exists: false } },
+      { $set: dto },
+      { new: true },
+    );
+
+    if (!transaction) {
+      throw new NotFoundException('Transaction not found');
+    }
+
+    return transaction;
   }
 }
