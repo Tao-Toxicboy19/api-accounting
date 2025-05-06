@@ -10,6 +10,9 @@ import {
 import { Transaction, TransactionDocument } from './schema';
 import { InstallmentService } from '../installment/installment.service';
 import * as dayjs from 'dayjs';
+import * as utc from 'dayjs/plugin/utc';
+dayjs.extend(utc);
+
 @Injectable()
 export class TransactionService {
   constructor(
@@ -68,7 +71,12 @@ export class TransactionService {
   async getIncomeAndExpenseSum(
     userId: string,
   ): Promise<{ income: number; expense: number }> {
-    const startOfMonth = dayjs().subtract(1, 'month').date(28).toDate();
+    const startOfMonth = dayjs()
+      .utc()
+      .subtract(1, 'month')
+      .date(28)
+      .startOf('day')
+      .toDate();
     const today = new Date();
 
     const [result] = await this.model.aggregate([
