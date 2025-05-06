@@ -28,7 +28,11 @@ export class InstallmentService {
 
   async getDropdownOptions(userId: string): Promise<LabelValueDto[]> {
     const installments = await this.model
-      .find({ user: userId, deletedAt: null })
+      .find({
+        user: userId,
+        deletedAt: null,
+        $expr: { $lt: ['$paidMonths', '$totalMonth'] },
+      })
       .select('name _id')
       .exec();
 

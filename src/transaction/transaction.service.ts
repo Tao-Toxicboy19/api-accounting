@@ -68,14 +68,14 @@ export class TransactionService {
   async getIncomeAndExpenseSum(
     userId: string,
   ): Promise<{ income: number; expense: number }> {
-    const startOfMonth = dayjs().startOf('month').add(1, 'day').toDate();
+    const startOfMonth = dayjs().subtract(1, 'month').date(28).toDate();
     const today = new Date();
 
     const [result] = await this.model.aggregate([
       {
         $match: {
           user: userId,
-          type: { $in: ['income', 'expense'] },
+          type: { $in: ['income', 'expense', 'installment'] },
           deletedAt: null,
           date: { $gte: startOfMonth, $lte: today },
         },
@@ -90,7 +90,11 @@ export class TransactionService {
           },
           expense: {
             $sum: {
-              $cond: [{ $eq: ['$type', 'expense'] }, '$amount', 0],
+              $cond: [
+                { $in: ['$type', ['expense', 'installment']] },
+                '$amount',
+                0,
+              ],
             },
           },
         },
