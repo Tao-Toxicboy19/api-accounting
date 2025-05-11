@@ -5,6 +5,7 @@ import {
   CreateTransactionDto,
   CreateTransactionWithInstallmentDto,
   DeleteTransactionByUserDto,
+  FindTransactionByUserDto,
   UpdateTransactionDto,
 } from './dto';
 import { Transaction, TransactionDocument } from './schema';
@@ -43,12 +44,31 @@ export class TransactionService {
     return transaction.save();
   }
 
-  async findAllByUser(userId: string): Promise<Transaction[]> {
-    return this.model
-      .find({ user: userId, deletedAt: null })
-      .select('-createdAt -updatedAt -__v')
-      .sort({ date: 1 })
-      .exec();
+  async findAllByUser({
+    user,
+    page = 1,
+    limit = 20,
+  }: FindTransactionByUserDto): Promise<{
+    items: Transaction[];
+    total: number;
+    totalPage: number;
+  }> {
+    const skip = (page - 1) * limit;
+
+    const [items, total] = await Promise.all([
+      this.model
+        .find({ user, deletedAt: null })
+        .select('-createdAt -updatedAt -__v')
+        .sort({ date: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean()
+        .exec(),
+      this.model.countDocuments({ user, deletedAt: null }),
+    ]);
+    const totalPage = Math.ceil(total / limit);
+
+    return { items, total, totalPage };
   }
 
   async softDeleteByUser(dto: DeleteTransactionByUserDto): Promise<void> {

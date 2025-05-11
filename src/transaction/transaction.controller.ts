@@ -23,8 +23,8 @@ export class TransactionController {
   @Post('list')
   async findAllByUser(
     @Body() dto: FindTransactionByUserDto,
-  ): Promise<Transaction[]> {
-    return this.transactionService.findAllByUser(dto.user);
+  ): Promise<{ items: Transaction[]; total: number; totalPage: number }> {
+    return this.transactionService.findAllByUser(dto);
   }
 
   @Post('delete')
