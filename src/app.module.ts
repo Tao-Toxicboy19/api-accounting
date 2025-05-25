@@ -5,6 +5,7 @@ import { TransactionModule } from './transaction/transaction.module';
 import { InstallmentModule } from './installment/installment.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { SavingGoalModule } from './saving-goal/saving-goal.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { join } from 'path';
     }),
     TransactionModule,
     InstallmentModule,
+    SavingGoalModule,
   ],
 })
 export class AppModule {}

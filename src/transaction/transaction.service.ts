@@ -1,6 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import {
   CreateTransactionDto,
   CreateTransactionWithInstallmentDto,
@@ -30,6 +34,9 @@ export class TransactionService {
         dto.amount,
       );
       dto.title = name;
+    } else if (dto.type === 'saving') {
+      if (!dto.savingGoalId) throw new BadRequestException(`Request Saving ID`);
+      dto.savingGoalId = new Types.ObjectId(dto.savingGoalId);
     }
     return this.saveTransaction(dto);
   }
