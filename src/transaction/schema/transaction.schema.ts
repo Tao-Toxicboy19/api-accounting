@@ -8,8 +8,11 @@ export class Transaction {
   @Prop({ required: true, index: true })
   user: string;
 
-  @Prop({ required: true, enum: ['income', 'expense', 'installment'] })
-  type: 'income' | 'expense' | 'installment';
+  @Prop({
+    required: true,
+    enum: ['income', 'expense', 'installment', 'saving'],
+  })
+  type: 'income' | 'expense' | 'installment' | 'saving';
 
   @Prop({ required: true })
   title: string;
@@ -25,6 +28,9 @@ export class Transaction {
 
   @Prop({ type: Types.ObjectId, ref: 'Installment' })
   installmentId?: Types.ObjectId;
+
+  @Prop({ type: Types.ObjectId, ref: 'SavingGoal' })
+  savingGoalId?: Types.ObjectId;
 
   @Prop()
   note?: string;

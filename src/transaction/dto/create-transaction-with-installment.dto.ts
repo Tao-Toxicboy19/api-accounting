@@ -1,10 +1,21 @@
+import { Types } from 'mongoose';
 import { CreateTransactionDto } from './create-transaction.dto';
-import { IsNumber, IsOptional, IsString, Min } from 'class-validator';
+import {
+  IsMongoId,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Min,
+} from 'class-validator';
 
 export class CreateTransactionWithInstallmentDto extends CreateTransactionDto {
   @IsOptional()
   @IsString()
   installmentId?: string;
+
+  @IsOptional()
+  @IsMongoId()
+  savingGoalId?: Types.ObjectId;
 
   @IsOptional()
   @IsNumber()
