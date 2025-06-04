@@ -64,7 +64,10 @@ export class TransactionService {
 
     const [items, total] = await Promise.all([
       this.model
-        .find({ user, deletedAt: null })
+        .find({
+          user,
+          $or: [{ deletedAt: { $exists: false } }, { deletedAt: null }],
+        })
         .select('-createdAt -updatedAt -__v')
         .sort({ date: -1 })
         .skip(skip)
