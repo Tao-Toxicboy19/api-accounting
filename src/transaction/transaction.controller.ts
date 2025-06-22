@@ -20,6 +20,12 @@ export class TransactionController {
     return this.transactionService.create(dto);
   }
 
+  @Post('test/n8n')
+  async testN8N(@Body() dto): Promise<string> {
+    console.log(dto);
+    return 'ok';
+  }
+
   @Post('list')
   async findAllByUser(
     @Body() dto: FindTransactionByUserDto,
